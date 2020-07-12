@@ -62,7 +62,7 @@ const url_EPA = "https://sta.ci.taiwan.gov.tw/STA_AirQuality_v2/v1.0/Datastreams
 async function getData(url, maintener) {
     const response = await fetch(url)
     const data = await response.json()
-    // data["@iot.nextLink"] && getData(data["@iot.nextLink"])
+    data["@iot.nextLink"] && getData(data["@iot.nextLink"])
     for (item of data.value) {
         // console.log(item)
         const long = item['Thing']['Locations'][0]['location']['coordinates'][0]
