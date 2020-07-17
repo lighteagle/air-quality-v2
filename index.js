@@ -1,7 +1,8 @@
 // Setview => 
 // view pertama pas loading di koor lat 25 long 121 zoom 7 
 var mymap = L.map('mapid').setView([24, 121], 7);
-
+let epaLayer_ = []
+let iotLayer_ = []
 
 // background Map=======================
 var _attribution = '<a href="https://itsmejelita.com" target="_blank">jelita@2020</a>';
@@ -42,8 +43,33 @@ legend.onAdd = function (mymap) {
     this.update();
     return this._div;
 };
+
+function myChEPA() {
+    const test = document.getElementById("ch-epa").checked
+    if (test) {
+        $('.epaMarker').css('display', 'block');
+    } else {
+        $('.epaMarker').css('display', 'none');
+    }
+}
+
+function myChIOT() {
+    const test = document.getElementById("ch-iot").checked
+    if (test) {
+        $('.iotMarker').css('display', 'block');
+    } else {
+        $('.iotMarker').css('display', 'none');
+    }
+}
+
+
 legend.update = function () {
-    this._div.innerHTML = '<h5>Legend</h5><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(103, 171, 57);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">0</text></svg> 000 - 050 Good<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(255, 204, 0);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">51</text></svg> 051 - 100 Moderate<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(238, 138, 25);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">101</text></svg> 101 - 150 Unhealthy for Sensitive Groups<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(156, 39, 43);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">151</text></svg> 151 - 200 Unhealthy<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(102, 0, 102);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">201</text></svg> 201 - 300 Very Unhealthy <br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(102, 51, 104);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">301</text></svg> 301 - 500 Hazardous<hr><small>Data Source:<br><a href="https://ci.taiwan.gov.tw/dsp/en/environmental_en.aspx/" target="_blank">Civil Taiwan Government</a></small>'
+    this._div.innerHTML = '<h5>Legend</h5>'
+    this._div.innerHTML += '<input type="checkbox" id="ch-epa" onclick="myChEPA()" checked>'
+    this._div.innerHTML += '<label for="ch-epa"> &nbsp EPA Station</label> <br>'
+    this._div.innerHTML += '<input type="checkbox" id="ch-iot" onclick="myChIOT()" checked>'
+    this._div.innerHTML += '<label for="ch-iot"> &nbsp IOT Station</label> <br>'
+    this._div.innerHTML += '<svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(103, 171, 57);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">0</text></svg> 000 - 050 Good<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(255, 204, 0);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">51</text></svg> 051 - 100 Moderate<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(238, 138, 25);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">101</text></svg> 101 - 150 Unhealthy for Sensitive Groups<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(156, 39, 43);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">151</text></svg> 151 - 200 Unhealthy<br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(102, 0, 102);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">201</text></svg> 201 - 300 Very Unhealthy <br><svg width="42" height="20"><rect width="42" height="17" style="fill:rgb(102, 51, 104);stroke-width:0.1;stroke:rgb(0,0,0)" /><text x="7" y="13.5" font-family="Verdana" font-size="14" fill="white">301</text></svg> 301 - 500 Hazardous<hr><small>Data Source:<br><a href="https://ci.taiwan.gov.tw/dsp/en/environmental_en.aspx/" target="_blank">Civil Taiwan Government</a></small>'
 };
 legend.addTo(mymap);
 
@@ -97,9 +123,9 @@ async function getData(url, maintener) {
             prefix: 'fa',
             tooltipAnchor: [15, -25]
         });
-        const marker = L.marker([lat, long], {
-            icon: lightgreenMarker
-        }).addTo(mymap)
+
+
+
         const txt = `
         <table style="border:1px">
             <tr>
@@ -129,8 +155,27 @@ async function getData(url, maintener) {
         </table>
         <a style="cursor:pointer" onClick=showChart('${item['Observations@iot.navigationLink']}?$count=true','${item['Thing']['properties']['stationName']}','${item['Thing']['properties']['stationID']}','${maintener}')>Show Graph</a>
         `
-        marker.bindPopup(txt)
+        if (maintener === 'EPA') {
+            const markerEPA = L.marker([lat, long], {
+                icon: lightgreenMarker
+            }).addTo(mymap)
+            markerEPA.bindPopup(txt)
+            $(markerEPA._icon).addClass("epaMarker")
+            epaLayer_ = [...epaLayer_, markerEPA]
+
+
+        } else {
+            const markerIOT = L.marker([lat, long], {
+                icon: lightgreenMarker
+            }).addTo(mymap)
+            markerIOT.bindPopup(txt)
+            $(markerIOT._icon).addClass("iotMarker")
+            iotLayer_ = [...iotLayer_, markerIOT]
+
+        }
     }
+
+
 }
 
 
@@ -165,7 +210,7 @@ async function showChart(url, stationName, stationID, maintener) {
             type: 'spline'
         },
         title: {
-            text: `${stationName} - PM.25 - Maintener (${maintener}) `
+            text: `${stationName} - PM.25 `
         },
         xAxis: {
             type: 'datetime'
@@ -203,6 +248,19 @@ async function getDataEPA(url) {
     }
 }
 
+async function setup() {
+    const dataIOT = await getData(url_IOT, "AcademiaSinica")
+    const dataEPA = await getData(url_EPA, "EPA")
 
-getData(url_IOT, "AcademiaSinica")
-getData(url_EPA, "EPA")
+    let epaLayer = await L.layerGroup(epaLayer_)
+    let iotLayer = await L.layerGroup(iotLayer_)
+    var Layers = await {
+        'EPA': epaLayer,
+        'IOT': iotLayer
+
+    };
+    // var layerControl = await L.control.layers(overlayGroups = c("Quakes", "Outline")Layers);
+    // layerControl.addTo(mymap)
+}
+
+setup()
